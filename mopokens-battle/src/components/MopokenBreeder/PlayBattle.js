@@ -13,9 +13,8 @@ class PlayBattle extends Component {
     }
 
     renderMopokenList() {
-       // this.props.hideWelcome();
         return(
-            <div>{mopokensMapper.fire}</div>
+            <div id="mopoken">{mopokensMapper.fire}</div>
         ); 
     }
 

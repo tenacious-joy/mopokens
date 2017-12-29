@@ -10,11 +10,6 @@ class App extends Component {
     this.state = {
       welcome: props.welcome
     };
-    this.hideWelcome = this.hideWelcome.bind(this);
-  }
-
-  hideWelcome() {
-    this.setState({ welcome: !this.state.welcome });
   }
 
   render() {
@@ -31,7 +26,7 @@ class App extends Component {
         }
         
         <MuiThemeProvider>
-          <PlayBattle hideWelcome={this.hideWelcome} />
+          <PlayBattle />
         </MuiThemeProvider>
       </div>
     )
