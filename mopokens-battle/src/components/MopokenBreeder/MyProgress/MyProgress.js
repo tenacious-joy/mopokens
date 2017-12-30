@@ -1,34 +1,57 @@
 import React, { Component } from 'react';
+import { mopokensMapper } from '../../../assets/mopokensAdvantageMapper';
 import Badge from 'material-ui/Badge';
 import FlatButton from 'material-ui/FlatButton';
-import Chip from 'material-ui/Chip';
-import CustomSnackBar from '../../Common/CustomSnackBar/CustomSnackBar';
-import { mopokensMapper } from '../../../assets/mopokensAdvantageMapper';
-
+import SelectedMopoken from '../SelectedMopokens/SelectedMopoken';
 class MyProgress extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            disabled: Array(Object.keys(mopokensMapper).length).fill(false),
             mopokens: [],
+            disabled: [],
             errorOpen: false,
         };
         this.selectMopoken = this.selectMopoken.bind(this);
+        this.enableReferenceMopoken = this.enableReferenceMopoken.bind(this);
     }
 
     selectMopoken(mopoken,i) {
-        const mopokens = this.state.mopokens;
+        let mopokens = this.state.mopokens;
+        let disabled = this.state.disabled;
         if (mopokens.length < 5) {
-            if (!mopokens.includes(mopoken)) {
-                mopokens.push(mopoken);
+            const existingMopoken = mopokens.filter((mopo) => mopo.type === mopoken);
+            if (existingMopoken.length === 0) {
+                mopokens.push({type: mopoken, level: 0, disabled: false });
                 this.setState({mopokens});
             }
-        const disabled = this.state.disabled;
-        disabled[i] = true;
-        this.setState({disabled});
         } else if (mopokens.length === 5) {
             this.setState({ errorOpen: true });
         }
+        const existingDisabled = disabled.filter((mopo) => mopo.type === mopoken);
+        if (existingDisabled.length === 0) {
+            disabled.push({type: mopoken, level: 0, disabled: true});
+            this.setState({disabled});
+        } else {
+            const foundMopokens = existingDisabled.map(
+                (mopo) => {
+                    if (mopo.type === mopoken.type) {
+                        mopo.disabled = true;
+                    }
+                    return mopo;
+                });
+            this.setState({disabled: foundMopokens});
+        } 
+    }
+
+    enableReferenceMopoken(mopoken, mopokens) {
+        const foundMopokens = this.state.disabled.map(
+            (mopo) => {
+                if (mopo.type === mopoken.type) {
+                    mopo.disabled = false;
+                }
+                return mopo;
+            });
+        this.setState({disabled: foundMopokens, mopokens});
     }
 
     render() {
@@ -42,23 +65,18 @@ class MyProgress extends Component {
                 secondary={true}
                 badgeStyle={{top: 12, right: 12}}
             ><FlatButton id={'btn'+i}
-            disabled={this.state.disabled[i]}
+            disabled={this.state.disabled && this.state.disabled.length > 0 &&
+                this.state.disabled.find((mopoken) => mopoken.type === type) &&
+                this.state.disabled.find((mopoken) => mopoken.type === type).disabled}
             label={type}
             onClick={() => this.selectMopoken(type,i)} primary={true} />
             </Badge>
                     ))
                 }
-                    <div id="chipText" style={{display: 'flex',
-    flexWrap: 'wrap', border: '1px solid grey'}}>{this.state.mopokens.map((mopoken, j) => (
-                        <Chip className="chip"
-                        key={'chip'+j} style={{margin: 10}}>{mopoken}</Chip>
-                    ))}</div>
-                    {
-                        this.state.errorOpen ? <CustomSnackBar
-                        type="error" timeout={3000}
-                        message="Delete one/two mopokens to add new ones"
-                        open /> : null
-                    }
+                    <SelectedMopoken
+                    errorOpen={this.state.errorOpen}
+                    mopokens={this.state.mopokens}
+                    enableReferenceMopoken={this.enableReferenceMopoken} />
             </div>
         )
     }

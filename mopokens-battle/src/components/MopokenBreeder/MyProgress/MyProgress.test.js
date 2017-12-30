@@ -38,6 +38,30 @@ describe("render myProgress component", () => {
     expect(div.children().length).toBe(8);
   });
 
+  it('mopoken type buttons should be disabled on click', () => {
+    const btn = app().find("FlatButton#btn1").find('button');
+    btn.simulate('click', { stopPropagation: ()=> undefined });
+    expect(app().find("FlatButton#btn1").prop('disabled')).toBe(true);
+  });
+
+  it('selectedmopoken should be rendered', () => {
+    const selectedMopoken = app().find("SelectedMopoken");
+    expect(selectedMopoken.length).toBe(1);
+  });
+
+  it('reference button should be enabled if the selected mopoken is deleted', () => {
+    const mopoken = {
+      type: 'water',
+      level: 0,
+      disabled: true
+    }
+    const selectedMopoken = app().find("SelectedMopoken");
+    selectedMopoken.prop('enableReferenceMopoken')(mopoken);
+
+    const btn = app().find("FlatButton#btn1");
+    expect(btn.prop('disabled')).toBe(false);
+  });
+
   it('render selected mopokens as chips', () => {
     const btn = app().find("FlatButton#btn1").find('button');
     btn.simulate('click', { stopPropagation: ()=> undefined });
