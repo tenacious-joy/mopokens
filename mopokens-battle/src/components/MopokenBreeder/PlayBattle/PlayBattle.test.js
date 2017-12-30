@@ -37,11 +37,40 @@ describe("render playbattle component", () => {
     const button = app().find("RaisedButton");
     expect(button.length).toBe(1);
   });
+});
 
-  it('expects div with mopoker list to be displayed', () => {
-      const btn = app().find("RaisedButton").find('button');
-      btn.simulate('click', { stopPropagation: ()=> undefined });
-      const div = app().find("#mopoken");
-      expect(div.html()).toBe('<div id="mopoken">grassghost</div>');
+describe("playBattle", () => {
+  let props;
+    let mountedApp;
+
+  const app = () => {
+    if(!mountedApp) {
+      mountedApp = mount(
+        <PlayBattle />, {
+            context: {
+                muiTheme: getMuiTheme(),
+              },
+              childContextTypes: {
+                muiTheme: PropTypes.object.isRequired,
+              }
+        }
+      );
+    }
+    return mountedApp;
+  }
+
+  beforeEach(() => {
+    mountedApp = undefined;
+  });
+
+  const playBattle = () => {
+    const btn = app().find("RaisedButton#playBattle").find('button');
+    btn.simulate('click', { stopPropagation: ()=> undefined });
+  }
+
+  it('renders breeder\'s progress over mopoken types and levels', () => {
+    const btn = app().find("RaisedButton#playBattle").find('button');
+    btn.simulate('click', { stopPropagation: ()=> undefined });
+    expect(app().find("MyProgress").length).toBe(1);
   });
 });

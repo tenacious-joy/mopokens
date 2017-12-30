@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import logo from '../../assets/logo.svg';
 import './App.css';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import PlayBattle from '../MopokenBreeder/PlayBattle';
+import PlayBattle from '../MopokenBreeder/PlayBattle/PlayBattle';
 
 class App extends Component {
   constructor(props) {
