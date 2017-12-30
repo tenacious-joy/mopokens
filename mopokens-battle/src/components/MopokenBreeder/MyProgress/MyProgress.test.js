@@ -85,4 +85,27 @@ describe("render myProgress component", () => {
     const selectedMopokensDiv = app().find("div#chipText");
     expect(selectedMopokensDiv.children().length).toBe(5);
   });
+
+  it('should display error message if the user chooses more than 5 mopokens', () => {
+    const btn = app().find("FlatButton#btn1").find('button');
+    btn.simulate('click', { stopPropagation: ()=> undefined });
+
+    const btn1 = app().find("FlatButton#btn2").find('button');
+    btn1.simulate('click', { stopPropagation: ()=> undefined });
+
+    const btn2 = app().find("FlatButton#btn3").find('button');
+    btn2.simulate('click', { stopPropagation: ()=> undefined });
+
+    const btn3 = app().find("FlatButton#btn4").find('button');
+    btn3.simulate('click', { stopPropagation: ()=> undefined });
+
+    const btn4 = app().find("FlatButton#btn5").find('button');
+    btn4.simulate('click', { stopPropagation: ()=> undefined });
+
+    const btn5 = app().find("FlatButton#btn6").find('button');
+    btn5.simulate('click', { stopPropagation: ()=> undefined });
+
+    const snackBar = app().find("CustomSnackBar");
+    expect(snackBar.length).toBe(1);
+  });
 });

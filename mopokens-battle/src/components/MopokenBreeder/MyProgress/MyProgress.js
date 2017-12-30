@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Badge from 'material-ui/Badge';
 import FlatButton from 'material-ui/FlatButton';
 import Chip from 'material-ui/Chip';
+import CustomSnackBar from '../../Common/CustomSnackBar/CustomSnackBar';
 import { mopokensMapper } from '../../../assets/mopokensAdvantageMapper';
 
 class MyProgress extends Component {
@@ -21,13 +22,13 @@ class MyProgress extends Component {
             if (!mopokens.includes(mopoken)) {
                 mopokens.push(mopoken);
                 this.setState({mopokens});
-            } else if (mopokens.length === 5) {
-                this.setState({ errorOpen: true });
             }
         const disabled = this.state.disabled;
         disabled[i] = true;
         this.setState({disabled});
-        }  
+        } else if (mopokens.length === 5) {
+            this.setState({ errorOpen: true });
+        }
     }
 
     render() {
@@ -52,6 +53,12 @@ class MyProgress extends Component {
                         <Chip className="chip"
                         key={'chip'+j} style={{margin: 10}}>{mopoken}</Chip>
                     ))}</div>
+                    {
+                        this.state.errorOpen ? <CustomSnackBar
+                        type="error" timeout={3000}
+                        message="Delete one/two mopokens to add new ones"
+                        open /> : null
+                    }
             </div>
         )
     }
