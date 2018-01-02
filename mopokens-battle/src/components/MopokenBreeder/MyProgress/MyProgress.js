@@ -24,23 +24,24 @@ class MyProgress extends Component {
                 mopokens.push({type: mopoken, level: 0, disabled: false });
                 this.setState({mopokens});
             }
-        } else if (mopokens.length === 5) {
-            this.setState({ errorOpen: true });
-        }
-        const existingDisabled = disabled.filter((mopo) => mopo.type === mopoken);
-        if (existingDisabled.length === 0) {
+           const existingDisabled = disabled.filter((mopo) => mopo.type === mopoken);
+        if (disabled.length === 0 || existingDisabled.length === 0) {
             disabled.push({type: mopoken, level: 0, disabled: true});
             this.setState({disabled});
         } else {
-            const foundMopokens = existingDisabled.map(
+            const foundMopokens = disabled.map(
                 (mopo) => {
-                    if (mopo.type === mopoken.type) {
+                    if (mopo.type === mopoken) {
                         mopo.disabled = true;
                     }
                     return mopo;
                 });
             this.setState({disabled: foundMopokens});
-        } 
+        }
+        } else if (mopokens.length === 5) {
+            this.setState({ errorOpen: true });
+        }
+         
     }
 
     enableReferenceMopoken(mopoken, mopokens) {
@@ -74,6 +75,7 @@ class MyProgress extends Component {
                     ))
                 }
                     <SelectedMopoken
+                    chooseBreeder={this.state.mopokens && this.state.mopokens.length === 5}
                     errorOpen={this.state.errorOpen}
                     mopokens={this.state.mopokens}
                     enableReferenceMopoken={this.enableReferenceMopoken} />
