@@ -70,7 +70,7 @@ class Register extends Component {
              onChange = {(event,newValue) => this.setState({password:newValue})}
              />
            <br/>
-           <Link to={`/breeder/${this.state.firstName}`}>
+           <Link to={`/breeder/${this.state.email}`}>
            <RaisedButton label="Submit" primary={true} onClick={(event) => this.registerUser(event)}/>
            </Link>
           </div>

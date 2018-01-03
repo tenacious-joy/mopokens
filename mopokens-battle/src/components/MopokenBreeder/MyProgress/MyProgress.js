@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { PropTypes } from 'prop-types';
 import { mopokensMapper } from '../../../assets/mopokensAdvantageMapper';
 import Badge from 'material-ui/Badge';
 import FlatButton from 'material-ui/FlatButton';
@@ -78,10 +79,15 @@ class MyProgress extends Component {
                     chooseBreeder={this.state.mopokens && this.state.mopokens.length === 5}
                     errorOpen={this.state.errorOpen}
                     mopokens={this.state.mopokens}
-                    enableReferenceMopoken={this.enableReferenceMopoken} />
+                    enableReferenceMopoken={this.enableReferenceMopoken}
+                    user={this.props.user} />
             </div>
         )
     }
+}
+
+MyProgress.propTypes = {
+    user: PropTypes.string.isRequired,
 }
 
 export default MyProgress;

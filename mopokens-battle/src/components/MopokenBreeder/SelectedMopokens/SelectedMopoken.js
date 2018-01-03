@@ -7,6 +7,7 @@ import './SelectedMopoken.css';
 import { opponent } from '../../../assets/opponent';
 import { mopokensMapper } from '../../../assets/mopokensAdvantageMapper';
 import { sequence } from '../../../utils/sequenceGenerator';
+import BreederList from '../BreederList/BreederList';
 // import Noty from 'noty';
 
 class SelectedMopoken extends Component {
@@ -14,10 +15,11 @@ class SelectedMopoken extends Component {
         super(props);
         this.state = {
             selectedMopokens: props.mopokens,
-            showOpponents: false,
+            play: false,
             winCount: 0,
         };
         this.showWinningSequence = this.showWinningSequence.bind(this);
+        this.enablePlay = this.enablePlay.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -69,6 +71,10 @@ class SelectedMopoken extends Component {
         }
         }
 
+        enablePlay() {
+            this.setState({ play: true });
+        }
+
     render() {
         return(<div>
                     <div id="chipText" style={{display: 'flex',
@@ -81,19 +87,14 @@ class SelectedMopoken extends Component {
                         style={{margin: 20}}>{mopoken.type}</Chip>
                     ))}</div>
                     {
-                        this.props.chooseBreeder && this.state.showOpponents ?
+                        this.props.chooseBreeder ?
                         <div>
-                        <div id="opponents" style={{display: 'flex',
-                        flexWrap: 'wrap', marginLeft: '20pc'}}>{
-                            opponent.map((oppo) => (<Chip className="chip"
-                        id={'chip'+oppo.level+oppo.type}
-                        key={'chip'+oppo.level+oppo.type}
-                        style={{margin: 20}}>{oppo.type}</Chip>))}
-                        </div><RaisedButton id="play" disabled={false}
+                        <BreederList user={this.props.user} play={this.enablePlay} />
+                        <RaisedButton id="play" disabled={!this.state.play}
                         label="play"
-                        primary onClick={this.showWinningSequence}/></div> : null
+                        primary style={{marginTop: '2pc'}} onClick={this.showWinningSequence}/></div> : null
                     }
-                    {
+                    {/* {
                         this.props.chooseBreeder ? 
                         <RaisedButton id="chooseBreeder"
                         disabled={false}
@@ -101,7 +102,7 @@ class SelectedMopoken extends Component {
                         primary={true}
                         style={{marginTop: '5pc'}}
                         onClick={() => this.setState({showOpponents: true})}/> : null
-                    }
+                    } */}
                     {
                         this.props.errorOpen ? <CustomSnackBar
                         type="error" timeout={3000}
@@ -117,7 +118,8 @@ SelectedMopoken.propTypes = {
     chooseBreeder: PropTypes.bool.isRequired,
     errorOpen: PropTypes.bool.isRequired,
     mopokens: PropTypes.object.isRequired,
-    enableReferenceMopoken: PropTypes.func.isRequired
+    enableReferenceMopoken: PropTypes.func.isRequired,
+    user: PropTypes.string.isRequired,
 }
 
 export default SelectedMopoken;

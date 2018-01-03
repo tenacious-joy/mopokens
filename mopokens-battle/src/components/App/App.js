@@ -50,7 +50,7 @@ class App extends Component {
       <ActionLockOpen />
     </FloatingActionButton>
           </Link>
-          </div> : <PlayBattle /> }
+          </div> : <PlayBattle user={this.props.match.params.firstName} /> }
         </MuiThemeProvider>
       </div>
     )

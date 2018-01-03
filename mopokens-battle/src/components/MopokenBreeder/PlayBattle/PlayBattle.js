@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { PropTypes } from 'prop-types';
 import RaisedButton from 'material-ui/RaisedButton';
 import MyProgress from '../MyProgress/MyProgress';
 
@@ -17,11 +18,15 @@ class PlayBattle extends Component {
                      secondary={true}
                 onClick={() => this.setState({ open: true })}/>
                 {
-                    this.state.open ? <MyProgress /> : null
+                    this.state.open ? <MyProgress user={this.props.user} /> : null
                 }
             </div>
         )
     }
+}
+
+PlayBattle.propTypes = {
+    user: PropTypes.string.isRequired,
 }
 
 export default PlayBattle;
