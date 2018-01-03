@@ -8,7 +8,8 @@ export const sequence = {
     heapsPermute: function(array = [], n) {
         n = n || array.length;
         if (n === 1) {
-            sequence.patterns.push(array);
+            const validArray = [].concat(array);
+            sequence.patterns.push(validArray);
         } else {
             for (let i = 1; i <= n; i++) {
                 sequence.heapsPermute(array, n-1);
@@ -25,6 +26,7 @@ export const sequence = {
     },
 
     isArrayDifferent: function(array, input) {
+      //  console.log(array, input);
       const op = input.map((elem, idx) => {
             if(JSON.stringify(elem) === JSON.stringify(array[idx])) {
                 return true;

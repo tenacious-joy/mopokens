@@ -1,10 +1,11 @@
 #chipText {
     height: 100;
     width: 100;
-    margin: 50;
-    border: 1px solid black;
+    margin: 100;
+    border: '1px solid grey';
+    border-radius: 2%;
 }
 
 .chip {
-    margin: 10;
+    margin: 20;
 }

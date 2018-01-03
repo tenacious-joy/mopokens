@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { PropTypes } from 'prop-types';
 import Chip from 'material-ui/Chip';
 import RaisedButton from 'material-ui/RaisedButton';
 import CustomSnackBar from '../../Common/CustomSnackBar/CustomSnackBar';
@@ -36,6 +37,7 @@ class SelectedMopoken extends Component {
     }
 
     showWinningSequence() {
+        sequence.patterns.length = 0;
         const selectedMopokens = this.state.selectedMopokens.slice();
         const possiblePermutations = sequence.heapsPermute(selectedMopokens, 
             selectedMopokens.length, selectedMopokens.slice());
@@ -57,7 +59,7 @@ class SelectedMopoken extends Component {
         }
             if(found) {
                 if (!sequence.isArrayDifferent(permutation, this.state.selectedMopokens)) {
-                    alert("You won the battle!!!")
+                    alert("You won the battle!!!");
                 } else {
                     alert("find the right pattern in developer tools console");
                     console.log(JSON.stringify(permutation));
@@ -70,33 +72,35 @@ class SelectedMopoken extends Component {
     render() {
         return(<div>
                     <div id="chipText" style={{display: 'flex',
-    flexWrap: 'wrap', border: '1px solid grey'}}>{this.state.selectedMopokens.map((mopoken, j) => (
+    flexWrap: 'wrap', marginLeft: '20pc'}}>
+    {this.state.selectedMopokens.map((mopoken, j) => (
                         <Chip className="chip"
                         id={'chip'+j}
                         key={'chip'+j}
                         onRequestDelete={() => this.deleteMopoken(mopoken)}
-                        style={{margin: 10}}>{mopoken.type}</Chip>
+                        style={{margin: 20}}>{mopoken.type}</Chip>
                     ))}</div>
+                    {
+                        this.props.chooseBreeder && this.state.showOpponents ?
+                        <div>
+                        <div id="opponents" style={{display: 'flex',
+                        flexWrap: 'wrap', marginLeft: '20pc'}}>{
+                            opponent.map((oppo) => (<Chip className="chip"
+                        id={'chip'+oppo.level+oppo.type}
+                        key={'chip'+oppo.level+oppo.type}
+                        style={{margin: 20}}>{oppo.type}</Chip>))}
+                        </div><RaisedButton id="play" disabled={false}
+                        label="play"
+                        primary onClick={this.showWinningSequence}/></div> : null
+                    }
                     {
                         this.props.chooseBreeder ? 
                         <RaisedButton id="chooseBreeder"
                         disabled={false}
                         label="Show Opponent"
                         primary={true}
+                        style={{marginTop: '5pc'}}
                         onClick={() => this.setState({showOpponents: true})}/> : null
-                    }
-                    {
-                        this.props.chooseBreeder && this.state.showOpponents ? 
-                        <div id="opponents" style={{display: 'flex',
-                        flexWrap: 'wrap', border: '1px solid grey'}}>{
-                            opponent.map((oppo) => (<Chip className="chip"
-                        id={'chip'+oppo.level+oppo.type}
-                        key={'chip'+oppo.level+oppo.type}
-                        style={{margin: 10}}>{oppo.type}</Chip>))}
-                        <RaisedButton id="play" disabled={false}
-                        label="play"
-                        primary onClick={this.showWinningSequence}/>
-                        </div> : null
                     }
                     {
                         this.props.errorOpen ? <CustomSnackBar
@@ -107,6 +111,13 @@ class SelectedMopoken extends Component {
             </div>
         )
     }
+}
+
+SelectedMopoken.propTypes = {
+    chooseBreeder: PropTypes.bool.isRequired,
+    errorOpen: PropTypes.bool.isRequired,
+    mopokens: PropTypes.object.isRequired,
+    enableReferenceMopoken: PropTypes.func.isRequired
 }
 
 export default SelectedMopoken;

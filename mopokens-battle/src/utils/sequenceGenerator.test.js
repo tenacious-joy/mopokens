@@ -2,6 +2,10 @@ import { sequence } from './sequenceGenerator';
 
 describe('should return the new sequence everytime', () => {
 
+    beforeEach(() => {
+        sequence.patterns.length = 0;
+    })
+
     const obj = [{
         type: 'ghost',
         level: 0,
@@ -77,6 +81,36 @@ describe('should return the new sequence everytime', () => {
         expect(isDifferent).toBe(true);
         expect(sequence.isArrayDifferent(obj1,obj2)).toBe(false);
     });
+
+    it('should not contain duplications--> It should fail', () => {
+        const obj1 = [{
+            type: 'ghost',
+            level: 0,
+            disabled: false
+        }, {
+            type: 'water',
+            level: 0,
+            disabled: false
+        },{
+            type: 'grass',
+            level: 0,
+            disabled: false
+        },{
+            type: 'fire',
+            level: 0,
+            disabled: false
+        },{
+            type: 'fighting',
+            level: 0,
+            disabled: false
+        }]
+    });
+
+    var ret =  sequence.heapsPermute(obj, obj.length);
+    const result = ret.map((val) => {
+        return sequence.isArrayDifferent(obj, val);
+    });
+    expect(result.slice(1,result.length)).toContain(false);
 
     // it ('get the sequence for n=3', () => {
     //     var ret = sequence.heapsPermute([1,2,3]);
