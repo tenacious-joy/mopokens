@@ -4,6 +4,8 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var Breeder = require('./model/breeders');
+var Mopokens = require('./model/mopokens');
+var BreederLevels = require('./model/breederLevels');
 var mongoose = require('mongoose');
 var db;
 //and create our instances
@@ -88,6 +90,61 @@ router.route('/breeders')
          }
          res.json({ message: 'Logged in successfully' });
      });
+ });
+
+//  router.route('/addMopoken')
+//  .post(function (req, res) {
+//      var mopokens = new Mopokens();
+//      mopokens.type = req.body.type;
+//      mopokens.level = req.body.level;
+//      mopokens.save(function (err) {
+//          console.log("saving..."+mopokens.type+mopokens.level);
+//          if(err) {
+//              console.log(err);
+//              res.send(err);
+//          }
+//          res.json({message: 'mopoken added successfully'});
+//      });
+//  });
+
+ router.route('/mopokens')
+ //retrieve all comments from the database
+ .get(function(req, res) {
+    console.log("Getting all types");
+    Mopokens.find(function(err, mopokens) {
+        console.log(err);
+ if (err)
+ res.send(err);
+ //responds with a json object of our database comments.
+ res.json(mopokens);
+ });
+ });
+
+ router.route('/saveUserLevels')
+ //retrieve all comments from the database
+ .post(function(req, res) {
+    console.log("Saving user levels");
+    var breederLevels = new BreederLevels();
+    breederLevels.email = req.body.email;
+    breederLevels.mopokens = req.body.mopokens;
+    breederLevels.save(function(err, mopokens) {
+        console.log(err);
+ if (err)
+ res.send(err);
+ //responds with a json object of our database comments.
+ res.json(mopokens);
+ });
+ });
+
+ router.route('/getBreederLevels')
+ .get(function (req, res) {
+     var breederLevel = new BreederLevels();
+     breederLevel.findByEmail(req.query.email, function (err, breederLevels) {
+        if (err) {
+           res.send(err);
+        }
+        res.json(breederLevels);
+    });
  });
 
 //Use our router configuration when we call /api
