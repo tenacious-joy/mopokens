@@ -12,6 +12,12 @@ var breederSchema = new Schema({
  password: String
 });
 
+breederSchema.methods.findUser = function (email, cb) {
+    this.model('Breeders').findOne({ 
+        email
+    }, cb);
+}
+
 breederSchema.methods.findByEmail = function (email, password, cb) {
     this.model('Breeders').find({ 
         email,

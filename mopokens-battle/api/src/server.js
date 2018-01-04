@@ -75,10 +75,30 @@ router.route('/breeders')
  breeder.password = req.body.password;
 
  breeder.save(function(err) {
- if (err)
+ if (err) {
  res.send(err);
- res.json({ message: 'You\'re a breeder now' });
+ }
+ var breederLevels = new BreederLevels();
+    breederLevels.email = req.body.email;
+    breederLevels.mopokens = req.body.mopokens;
+    breederLevels.save(function(err, mopokens) {
+ if (err) {
+ res.send(err);
+ }
+ res.json(mopokens);
  });
+ });
+ });
+
+ router.route('/findEmail')
+ .post(function(req, res) {
+    var breeder = new Breeder();
+    breeder.findUser(req.body.email, function (err, user) {
+         if (err) {
+            res.send(err);
+         }
+         res.send({user});
+     });
  });
 
  router.route('/login')
@@ -126,14 +146,28 @@ router.route('/breeders')
     console.log("Saving user levels");
     var breederLevels = new BreederLevels();
     breederLevels.email = req.body.email;
-    breederLevels.mopokens = req.body.mopokens;
-    breederLevels.save(function(err, mopokens) {
-        console.log(err);
- if (err)
- res.send(err);
- //responds with a json object of our database comments.
- res.json(mopokens);
- });
+    breederLevels.findByEmail(breederLevels.email, function (err, breeder) {
+        if(err) {
+            res.send(err);
+        }
+        breeder.mopokens = req.body.mopokens;
+        breeder.save((err, savedBreeder) => {
+            if (err) {
+                res.send(err);
+            }
+            res.send(savedBreeder);
+        })
+    });
+//     breederLevels.update({email: breederLevels.email}, 
+//         {$set:{mopokens:breederLevels.mopokens}},
+//         {new: true, upsert: true, returnNewDocument: true},
+//     function(err, mopokens) {
+//         console.log(err);
+//  if (err)
+//  res.send(err);
+//  //responds with a json object of our database comments.
+//  res.json(mopokens);
+//  });
  });
 
  router.route('/getBreederLevels')

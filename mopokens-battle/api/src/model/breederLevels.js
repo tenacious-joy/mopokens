@@ -13,8 +13,16 @@ var breederLevelSchema = new Schema({
 });
 
 breederLevelSchema.methods.findByEmail = function (email, cb) {
-    this.model('BreederLevels').find({ 
+    this.model('BreederLevels').findOne({ 
         email
+    }, cb);
+}
+
+breederLevelSchema.methods.update = function (condition, newData, options, cb) {
+    this.model('BreederLevels').findOneAndUpdate({ 
+        condition,
+        newData,
+        options,
     }, cb);
 }
 

@@ -7,18 +7,24 @@ class PlayBattle extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            open: false,  
+            open: false,
+            hideBtn: false
         }
+        this.callBack = this.callBack.bind(this);
+    }
+
+    callBack(hideBtn) {
+        this.setState({ hideBtn });
     }
 
     render() {
         return(
             <div>
-                <RaisedButton id="playBattle" label="Pick a challenge"
+                { !this.state.hideBtn ? <RaisedButton id="playBattle" label="Pick a challenge"
                      secondary={true}
-                onClick={() => this.setState({ open: true })}/>
+                onClick={() => this.setState({ open: true })}/> : null }
                 {
-                    this.state.open ? <MyProgress user={this.props.user} /> : null
+                    this.state.open ? <MyProgress user={this.props.user} callBack={this.callBack} /> : null
                 }
             </div>
         )

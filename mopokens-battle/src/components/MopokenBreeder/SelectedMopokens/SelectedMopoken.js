@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { PropTypes } from 'prop-types';
 import Chip from 'material-ui/Chip';
+import Badge from 'material-ui/Badge';
+import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import CustomSnackBar from '../../Common/CustomSnackBar/CustomSnackBar';
 import './SelectedMopoken.css';
@@ -8,7 +10,10 @@ import { opponent } from '../../../assets/opponent';
 import { mopokensMapper } from '../../../assets/mopokensAdvantageMapper';
 import { sequence } from '../../../utils/sequenceGenerator';
 import BreederList from '../BreederList/BreederList';
-// import Noty from 'noty';
+import {
+  blue500,
+} from 'material-ui/styles/colors';
+import axios from 'axios';
 
 class SelectedMopoken extends Component {
     constructor(props) {
@@ -17,18 +22,11 @@ class SelectedMopoken extends Component {
             selectedMopokens: props.mopokens,
             play: false,
             winCount: 0,
+            opponent,
+            uri: 'http://localhost:3001',
         };
         this.showWinningSequence = this.showWinningSequence.bind(this);
         this.enablePlay = this.enablePlay.bind(this);
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.chooseBreeder !== this.props.chooseBreeder) {
-            if (!nextProps.chooseBreeder) {
-                this.setState({showOpponents:  false});
-             //   this.setState({ winCount:0 });
-            }
-        }
     }
 
     deleteMopoken(mopoken) {
@@ -47,11 +45,15 @@ class SelectedMopoken extends Component {
         for (let permutation of possiblePermutations) {
             let winCount = 0;
             if (!found) {
+                // eslint-disable-next-line
             permutation.map((mopoken, idx) => {
                 if (mopokensMapper[mopoken.type]) {
-                    if (mopokensMapper[mopoken.type].includes(opponent[idx].type) ||
-                    mopoken.level >= opponent[idx].level) {
+                    if (mopokensMapper[mopoken.type].includes(this.state.opponent[idx].type) ||
+                    mopoken.level > this.state.opponent[idx].level) {
                        winCount ++;
+                       if (!sequence.isArrayDifferent(permutation, this.state.selectedMopokens)) {
+                        mopoken.level = mopoken.level + 1;
+                       }
                     }
                 }
                 if(winCount >= 3) {
@@ -59,33 +61,67 @@ class SelectedMopoken extends Component {
                 }
             });
         }
-            if(found) {
-                if (!sequence.isArrayDifferent(permutation, this.state.selectedMopokens)) {
-                    alert("You won the battle!!!");
-                } else {
-                    alert("find the right pattern in developer tools console");
-                    console.log(JSON.stringify(permutation));
-                }
+            if(found && sequence.isArrayDifferent(permutation, this.state.selectedMopokens)) {
+                this.setState({ winningSequence: permutation });
+                this.setState({ won: false });
+                this.props.callBack();
                 break; 
+            } else if(found && !sequence.isArrayDifferent(permutation, this.state.selectedMopokens)) {
+                this.setState({ won: true });
             }
         }
+        this.updateBreederWins();
         }
 
-        enablePlay() {
+        enablePlay(opponent) {
             this.setState({ play: true });
+            this.setState({ opponent });
+        }
+
+        updateBreederWins() {
+            const cloneData = [].concat(this.state.selectedMopokens);
+            for(const data of this.props.initialData) {
+               if (!this.state.selectedMopokens.find(mopo => mopo.type === data.type)) {
+                cloneData.push(data);
+               }
+            }
+            const payload = {
+                email: this.props.user,
+                mopokens: cloneData
+            }
+            axios.post(`${this.state.uri}/api/saveUserLevels`, payload)
+    .then(res => {
+      //  this.setState({ selectedMopokens: res.data });
+ });
         }
 
     render() {
         return(<div>
                     <div id="chipText" style={{display: 'flex',
-    flexWrap: 'wrap', marginLeft: '20pc'}}>
-    {this.state.selectedMopokens.map((mopoken, j) => (
+    flexWrap: 'wrap', marginLeft: this.state.won === undefined ? '20pc' : '28pc'}}>
+    {this.state.won === undefined && this.state.selectedMopokens &&
+    this.state.selectedMopokens.map((mopoken, j) => (
                         <Chip className="chip"
                         id={'chip'+j}
                         key={'chip'+j}
                         onRequestDelete={() => this.deleteMopoken(mopoken)}
                         style={{margin: 20}}>{mopoken.type}</Chip>
-                    ))}</div>
+                    ))}{this.state.won === true ? 
+                    <span style={{color: 'green', fontSize: '5em'}}>
+                    You won the match</span> : this.state.won === false ? <div><h3 style={{color: blue500}}>Here's the winning sequence...</h3>
+                       { this.state.winningSequence && this.state.winningSequence.map((val, i) => (
+                            <Badge
+                badgeContent={val.level}
+                key={'badge'+i}
+                secondary={true}
+                badgeStyle={{top: 12, right: 12}}
+            ><FlatButton id={'btn'+i}
+            disabled={false}
+            label={val.type}
+            primary={true} />
+            </Badge>
+                        ))
+                    }</div>: null}</div>
                     {
                         this.props.chooseBreeder ?
                         <div>
@@ -94,15 +130,6 @@ class SelectedMopoken extends Component {
                         label="play"
                         primary style={{marginTop: '2pc'}} onClick={this.showWinningSequence}/></div> : null
                     }
-                    {/* {
-                        this.props.chooseBreeder ? 
-                        <RaisedButton id="chooseBreeder"
-                        disabled={false}
-                        label="Show Opponent"
-                        primary={true}
-                        style={{marginTop: '5pc'}}
-                        onClick={() => this.setState({showOpponents: true})}/> : null
-                    } */}
                     {
                         this.props.errorOpen ? <CustomSnackBar
                         type="error" timeout={3000}
@@ -115,6 +142,7 @@ class SelectedMopoken extends Component {
 }
 
 SelectedMopoken.propTypes = {
+    initialData: PropTypes.object.isRequired,
     chooseBreeder: PropTypes.bool.isRequired,
     errorOpen: PropTypes.bool.isRequired,
     mopokens: PropTypes.object.isRequired,
