@@ -5,6 +5,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import {withRouter} from 'react-router-dom';
 import axios from 'axios';
+import { setTimeout } from 'timers';
 
 class Register extends Component {
   constructor(props){
@@ -17,6 +18,8 @@ class Register extends Component {
       uri: 'http://localhost:3001',
       errors: {},
     }
+    this.validateUser = this.validateUser.bind(this);
+    this.registerUser = this.registerUser.bind(this);
   }
 
   validateUser() {
@@ -57,29 +60,31 @@ class Register extends Component {
   registerUser(event){
     let initialData = [];
     this.validateUser();
-    if(Object.keys(this.state.errors).length === 0) {
-    axios.get(`${this.state.uri}/api/mopokens`).then(
-      (res) => {
-        initialData = res.data;
-        const newBreeder = {
-          firstName: this.state.firstName,
-          lastName: this.state.lastName,
-          email: this.state.email,
-          password: this.state.password,
-          mopokens: initialData
-      } 
-    axios.post(`${this.state.uri}/api/register`,newBreeder).then(
-      (res) => {
-        if(res.data && res.data.email === this.state.email) {
-          this.props.history.push("/breeder/"+this.state.email);
+    setTimeout(() => {
+      if(Object.keys(this.state.errors).length === 0) {
+        axios.get(`${this.state.uri}/api/mopokens`).then(
+          (res) => {
+            initialData = res.data;
+            const newBreeder = {
+              firstName: this.state.firstName,
+              lastName: this.state.lastName,
+              email: this.state.email,
+              password: this.state.password,
+              mopokens: initialData
+          } 
+        axios.post(`${this.state.uri}/api/register`,newBreeder).then(
+          (res) => {
+            if(res.data && res.data.email === this.state.email) {
+              this.props.history.push("/breeder/"+this.state.email);
+            }
+          }).catch(function (error) {
+            console.log(error.response);
+        });
+          }).catch(function (error) {
+          console.log(error.response);
+     });
         }
-      }).catch(function (error) {
-        console.log(error.response);
-    });
-      }).catch(function (error) {
-      console.log(error.response);
- });
-    }
+    },2000) 
   }
 
   render() {

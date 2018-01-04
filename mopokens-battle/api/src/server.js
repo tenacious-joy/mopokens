@@ -104,11 +104,11 @@ router.route('/breeders')
  router.route('/login')
  .post(function(req, res) {
     var breeder = new Breeder();
-    breeder.findByEmail(req.body.email, req.body.password, function (err) {
+    breeder.findByEmail(req.body.email, req.body.password, function (err, user) {
          if (err) {
             res.send(err);
          }
-         res.json({ message: 'Logged in successfully' });
+         res.json({ user });
      });
  });
 
@@ -178,6 +178,17 @@ router.route('/breeders')
            res.send(err);
         }
         res.json(breederLevels);
+    });
+ });
+
+ router.route('/deleteAll')
+ .delete(function(req,res) {
+    var breeders = new Breeder();
+    breeders.deleteAll(function(err) {
+        if(err) {
+            res.send(err);
+        }
+        res.send({message: 'deleted successfully'});
     });
  });
 

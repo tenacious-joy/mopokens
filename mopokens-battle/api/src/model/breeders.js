@@ -25,5 +25,9 @@ breederSchema.methods.findByEmail = function (email, password, cb) {
     }, cb);
 }
 
+breederSchema.methods.deleteAll = function (cb) {
+    this.model('Breeders').deleteMany({}, cb);
+}
+
 //export our module to use in server.js
 module.exports = mongoose.model('Breeders', breederSchema);
