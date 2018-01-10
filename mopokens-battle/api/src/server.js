@@ -14,12 +14,12 @@ var router = express.Router();
 //set our port to either a predetermined port number if you have set 
 //it up, or 3001
 var port = process.env.API_PORT || 3001;
-var username = process.env.USERNAME;
-var password = process.env.PASSWORD;
+var username = process.env.npm_package_config_username;
+var password = process.env.npm_package_config_password;
+
+console.log("process",process.env.npm_package_config_myPort);
 //now we should configure the API to use bodyParser and look for 
 //JSON data in the request body
-// mongoose.connect('mongodb://aj:novice@localhost:27017/novice-cluster');
-// var uri = "mongodb://aj:novice@novice-cluster-shard-00-00-zvclx.mongodb.net:27017,novice-cluster-shard-00-01-zvclx.mongodb.net:27017,novice-cluster-shard-00-02-zvclx.mongodb.net:27017/coding-challenge?ssl=true&replicaSet=novice-cluster-shard-0&authSource=admin";
 var uri = "mongodb://"+username+":"+password+"@ds239137.mlab.com:39137/mopokens";
 mongoose.connect(uri, function(err, database) {
     
